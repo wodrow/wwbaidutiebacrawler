@@ -1,0 +1,26 @@
+{
+  "name": "wodrow/wwbaidutiebacrawler",
+  "description": "另一款分类树编辑管理工具",
+  "keywords": [
+    "百度贴吧",
+    "内容抓取"
+  ],
+  "type": "yii2-extension",
+  "require": {
+    "php": ">=7.1",
+    "wodrow/yii2wtools": "^0.1.18"
+  },
+  "authors": [
+    {
+      "name": "wodrow",
+      "email": "wodrow451611cv@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "wodrow\\wwbaidutiebacrawler\\": "src/"
+    }
+  }
+}
