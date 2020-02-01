@@ -8,6 +8,7 @@
   "type": "yii2-extension",
   "require": {
     "php": ">=7.1",
+    "jaeger/querylist": "^4.1.1",
     "wodrow/yii2wtools": "^0.1.18"
   },
   "authors": [
