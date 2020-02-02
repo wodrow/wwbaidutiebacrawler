@@ -23,10 +23,10 @@ class Spider extends Component
     public $alias_upload_url = ""; // @uploads_url/baidu_tieba
     public $is_console = 0;
     public $is_cache = 0;
-    public $title;
-    public $post_ids;
-    public $author_id;
-    public $author_name;
+    public $title; # data
+    public $post_ids; # data
+    public $author_id; # data
+    public $author_name; # data
     protected $upload_root;
     protected $upload_url;
 
@@ -155,6 +155,12 @@ class Spider extends Component
             }
             $this->author_id = $list[0]['tail']['author']['user_id'];
             $this->author_name = $list[0]['tail']['author']['user_name'];
+            foreach ($list as $k => $v) {
+                $list[$k]['post_id'] = $v['tail']['content']['post_id'];
+                unset($list[$k]['tail']);
+                unset($list[$k]['html']);
+                $list[$k]['text'] .= " <p> [来自贴吧]</p>";
+            }
         }
         return $list;
     }
