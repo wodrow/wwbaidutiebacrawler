@@ -146,8 +146,6 @@ class Spider extends Component
                 $imgs = $this->saveTieBaImage($images);
                 $vids = $this->saveTieBaVideo($videos);
                 $list[$k]['text'] = "<p>".implode('', $vids)."</p>"."<p>{$v['text']}</p>"."<p>".implode('', $imgs)."</p>";
-//                $list[$k]['images'] = $imgs;
-//                $list[$k]['videos'] = $vids;
             }
             foreach ($list as $k => $v){
                 if (isset($v['tail'])) {
