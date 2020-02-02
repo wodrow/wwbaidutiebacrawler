@@ -10,6 +10,7 @@ namespace wodrow\wwbaidutiebacrawler;
 
 
 use QL\QueryList;
+use wodrow\yii2wtools\tools\ArrayHelper;
 use wodrow\yii2wtools\tools\FileHelper;
 use yii\base\Component;
 use yii\base\Exception;
@@ -18,7 +19,16 @@ use yii\helpers\Html;
 class Spider extends Component
 {
     public $url;
+    public $alias_upload_root = ""; // @uploads_root/baidu_tieba
+    public $alias_upload_url = ""; // @uploads_url/baidu_tieba
     public $is_console = 0;
+    public $is_cache = 0;
+    public $title;
+    public $post_ids;
+    public $author_id;
+    public $author_name;
+    protected $upload_root;
+    protected $upload_url;
 
     /**
      * @param $msg
@@ -28,9 +38,15 @@ class Spider extends Component
     {
         if ($this->is_console){
             var_dump($msg);
+            exit;
         }else{
             throw new Exception($msg);
         }
+    }
+
+    public function consoleMsg($msg)
+    {
+        if ($this->is_console)var_dump($msg);
     }
 
     /**
@@ -53,6 +69,16 @@ class Spider extends Component
         }
     }
 
+    public function getUploadRootAndUrl()
+    {
+        $_dir = str_replace("http://tieba.baidu.com/p/", "", $this->url);
+        $this->upload_root = \Yii::getAlias("@uploads_root/baidu_tieba/{$_dir}");
+        $this->upload_url = \Yii::getAlias("@uploads_url/baidu_tieba/{$_dir}");
+        if (!is_dir($this->upload_root)){
+            FileHelper::createDirectory($this->upload_root);
+        }
+    }
+
     public function getList()
     {
         $ql = QueryList::getInstance()->get($this->url);
@@ -60,13 +86,13 @@ class Spider extends Component
         $this->title .= " [引自百度贴吧]";
         $this->post_ids = [];
         $pages = $ql->find('.l_reply_num')->find('.red:eq(1)')->text();
-        if ($this->is_console)var_dump($pages);
+        $this->consoleMsg($pages);
         if (!$this->is_cache)\Yii::$app->cache->delete('FormTieBaiduSpider-generate');
         $list = \Yii::$app->cache->get('FormTieBaiduSpider-generate');
         if (!$list){
             $list = [];
             for ($i = 1; $i <= $pages; $i++){
-                if ($this->is_console)var_dump($i);
+                $this->consoleMsg($i);
                 if ($i == 1){
                     $_ql = $ql;
                 }else{
@@ -109,7 +135,7 @@ class Spider extends Component
                 }
             }*/
             foreach ($list as $k => $v) {
-                if ($this->is_console)var_dump("list:".$k);
+                $this->consoleMsg("list:".$k);
                 $_ql = QueryList::getInstance()->html($v['html']);
                 $images = $_ql->rules([
                     'image' => ['img', 'src'],
@@ -142,12 +168,6 @@ class Spider extends Component
      */
     public function saveTieBaImage($images)
     {
-        $_dir = str_replace("http://tieba.baidu.com/p/", "", $this->url);
-        $upload_root = \Yii::getAlias("@uploads_root/baidu_tieba/{$_dir}");
-        $upload_url = \Yii::getAlias("@uploads_url/baidu_tieba/{$_dir}");
-        if (!is_dir($upload_root)){
-            FileHelper::createDirectory($upload_root);
-        }
         $imgs = [];
         foreach ($images as $k => $v){
             $image_name = basename($v['image']);
@@ -155,14 +175,14 @@ class Spider extends Component
                 $_x = explode("?t=", $image_name);
                 $image_name = $_x[0];
             }
-            $root = $upload_root.DIRECTORY_SEPARATOR.$image_name;
-            $url = $upload_url.DIRECTORY_SEPARATOR.$image_name;
+            $root = $this->upload_root.DIRECTORY_SEPARATOR.$image_name;
+            $url = $this->upload_url.DIRECTORY_SEPARATOR.$image_name;
             if (!file_exists($root)){
                 $fg_con = @file_get_contents($v['image']);
                 if ($fg_con){
                     file_put_contents($root, $fg_con);
                     $imgs[] = Html::img($url, ['class' => "img img-responsive"]);
-                    if ($this->is_console)var_dump($url);
+                    $this->consoleMsg($url);
                 }
             }
         }
@@ -176,12 +196,6 @@ class Spider extends Component
      */
     public function saveTieBaVideo($videos)
     {
-        $_dir = str_replace("http://tieba.baidu.com/p/", "", $this->url);
-        $upload_root = \Yii::getAlias("@uploads_root/baidu_tieba/{$_dir}");
-        $upload_url = \Yii::getAlias("@uploads_url/baidu_tieba/{$_dir}");
-        if (!is_dir($upload_root)){
-            FileHelper::createDirectory($upload_root);
-        }
         $vids = [];
         foreach ($videos as $k => $v){
             $video_name = basename($v['video']);
@@ -189,8 +203,8 @@ class Spider extends Component
                 $_x = explode("?t=", $video_name);
                 $video_name = $_x[0];
             }
-            $root = $upload_root.DIRECTORY_SEPARATOR.$video_name;
-            $url = $upload_url.DIRECTORY_SEPARATOR.$video_name;
+            $root = $this->upload_root.DIRECTORY_SEPARATOR.$video_name;
+            $url = $this->upload_url.DIRECTORY_SEPARATOR.$video_name;
             if (!file_exists($root)){
                 $fg_con = @file_get_contents($v['image']);
                 if ($fg_con){
