@@ -67,6 +67,7 @@ class Spider extends Component
         } else {
             $this->error('不是帖子');
         }
+        $this->getUploadRootAndUrl();
     }
 
     public function getUploadRootAndUrl()
@@ -81,6 +82,7 @@ class Spider extends Component
 
     public function getList()
     {
+        $this->checkIsTieZi();
         $ql = QueryList::getInstance()->get($this->url);
         $this->title = $ql->find(".core_title_txt")->attr('title');
         $this->title .= " [引自百度贴吧]";
