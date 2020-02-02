@@ -85,7 +85,7 @@ class Spider extends Component
         $this->getUploadRootAndUrl();
         $ql = QueryList::getInstance()->get($this->url);
         $this->title = $ql->find(".core_title_txt")->attr('title');
-        $this->title .= " [引自百度贴吧]";
+        if ($this->title)$this->title .= " [引自百度贴吧]";
         $this->post_ids = [];
         $pages = $ql->find('.l_reply_num')->find('.red:eq(1)')->text();
         $this->consoleMsg($pages);
