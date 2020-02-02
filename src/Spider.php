@@ -18,7 +18,7 @@ use yii\helpers\Html;
 
 class Spider extends Component
 {
-    public $url;
+    public $url; # data
     public $alias_upload_root = ""; // @uploads_root/baidu_tieba
     public $alias_upload_url = ""; // @uploads_url/baidu_tieba
     public $is_console = 0;
