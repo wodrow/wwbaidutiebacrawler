@@ -89,8 +89,8 @@ class Spider extends Component
         $this->post_ids = [];
         $pages = $ql->find('.l_reply_num')->find('.red:eq(1)')->text();
         $this->consoleMsg($pages);
-        if (!$this->is_cache)\Yii::$app->cache->delete('FormTieBaiduSpider-generate');
-        $list = \Yii::$app->cache->get('FormTieBaiduSpider-generate');
+        if (!$this->is_cache)\Yii::$app->cache->delete('TieBaiduSpider-generate-'.$this->url);
+        $list = \Yii::$app->cache->get('TieBaiduSpider-generate-'.$this->url);
         if (!$list){
             $list = [];
             for ($i = 1; $i <= $pages; $i++){
@@ -107,7 +107,7 @@ class Spider extends Component
                     'tail' => ['.j_l_post:visible', 'data-field'],
                 ])->queryData());
             }
-            \Yii::$app->cache->set('FormTieBaiduSpider-generate', $list, 3600);
+            \Yii::$app->cache->set('TieBaiduSpider-generate-'.$this->url, $list, 3600);
         }
         foreach ($list as $k => $v){
             $_ql = QueryList::getInstance()->html($v['html']);
