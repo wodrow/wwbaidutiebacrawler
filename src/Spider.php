@@ -63,7 +63,7 @@ class Spider extends Component
             $_id = $arr[0];
         }
         if (is_numeric($_id)) {
-            $this->url = $str.$_id;
+            return $this->url = $str.$_id;
         } else {
             $this->error('不是帖子');
         }
