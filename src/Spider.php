@@ -10,8 +10,8 @@ namespace wodrow\wwbaidutiebacrawler;
 
 
 use QL\QueryList;
-use wodrow\yii2wtools\tools\ArrayHelper;
-use wodrow\yii2wtools\tools\FileHelper;
+use yii\helpers\ArrayHelper;
+use yii\helpers\FileHelper;
 use yii\base\Component;
 use yii\base\Exception;
 use yii\helpers\Html;
