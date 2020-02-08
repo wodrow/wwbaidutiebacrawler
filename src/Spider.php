@@ -19,6 +19,7 @@ use yii\helpers\Html;
 class Spider extends Component
 {
     public $url; # data
+    public $baiduTieziId;
     public $alias_upload_root = ""; // @uploads_root/baidu_tieba
     public $alias_upload_url = ""; // @uploads_url/baidu_tieba
     public $is_console = 0;
@@ -63,6 +64,7 @@ class Spider extends Component
             $_id = $arr[0];
         }
         if (is_numeric($_id)) {
+            $this->baiduTieziId = $_id;
             return $this->url = $str.$_id;
         } else {
             $this->error('不是帖子');
@@ -89,8 +91,8 @@ class Spider extends Component
         $this->post_ids = [];
         $pages = $ql->find('.l_reply_num')->find('.red:eq(1)')->text();
         $this->consoleMsg($pages);
-        if (!$this->is_cache)\Yii::$app->cache->delete('TieBaiduSpider-generate-'.$this->url);
-        $list = \Yii::$app->cache->get('TieBaiduSpider-generate-'.$this->url);
+        if (!$this->is_cache)\Yii::$app->cache->delete('baiduTieziId_'.$this->baiduTieziId);
+        $list = \Yii::$app->cache->get('baiduTieziId_'.$this->baiduTieziId);
         if (!$list){
             $list = [];
             for ($i = 1; $i <= $pages; $i++){
@@ -100,14 +102,15 @@ class Spider extends Component
                 }else{
                     $_ql = QueryList::getInstance()->get($this->url."?pn={$i}");
                 }
-                $list = ArrayHelper::merge($list, $_ql->rules([
+                $_list = $_ql->rules([
 //                    'html' => ['.j_l_post:visible .j_d_post_content', 'html'],
                     'html' => ['.j_l_post:visible', 'html'],
                     'text' => ['.j_l_post:visible', 'text'],
                     'tail' => ['.j_l_post:visible', 'data-field'],
-                ])->queryData());
+                ])->queryData();
+                $list = ArrayHelper::merge($list, $_list);
             }
-            \Yii::$app->cache->set('TieBaiduSpider-generate-'.$this->url, $list, 3600);
+            \Yii::$app->cache->set('baiduTieziId_'.$this->baiduTieziId, $list, 3600);
         }
         foreach ($list as $k => $v){
             $_ql = QueryList::getInstance()->html($v['html']);
