@@ -8,8 +8,7 @@
   "type": "yii2-extension",
   "require": {
     "php": ">=7.1",
-    "wodrow/yii2wtxtcrawler": "^1.0.0",
-    "wodrow/yii2wtools": "^1.0.0"
+    "wodrow/yii2wtxtcrawler": "^1.0.0"
   },
   "authors": [
     {
